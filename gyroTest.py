@@ -1,20 +1,17 @@
-import sys
-sys.path.insert(1,'/home/pi/GY-85_Raspberry-Pi/i2clibraries')
-from i2c_itg3205 import *
-from time import *
+From i2clibraries import i2c_itg3205
+From time import *
 
-itg3205 = i2c_itg3205(1)
+Itg3205 = i2c_itg3205.i2c_itg3205 (0)
 
-while True:
-    (itgready, dataready) = itg3205.getInterruptStatus ()
-    if dataready:
-        temp = itg3205.getDieTemperature ()
-        (x, y, z) = itg3205.getDegPerSecAxes ()
-        print ("Temp:" + str (temp ))
-        print ("X:" + str (x ))
-        print ("Y:" + str (y ))
-        print ("Z:" + str (z ))
-        print ("")
+While true:
+(Itgready, dataready) = itg3205.getinterruptstatus ()
+If dataready:
+Temp = itg3205.getdietemperature ()
+(X, y, z) = itg3205.getdegpersecaxes ()
+Print ("Temp:" + STR (temp ))
+Print ("X:" + STR (x ))
+Print ("Y:" + STR (y ))
+Print ("Z:" + STR (z ))
+Print ("")
 
-    sleep (1)
-    
+Sleep (1)

@@ -1,0 +1,7 @@
+import i2c_lib
+from time import *
+
+#LCD Address
+
+ADDRESS = 0X27
+
