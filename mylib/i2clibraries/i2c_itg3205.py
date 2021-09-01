@@ -1,7 +1,4 @@
 import math
-#import sys
-#sys.path.insert(1,'/home/pi/i2clibraries')
-#import i2c
 from i2clibraries import i2c
 from time import *
 
