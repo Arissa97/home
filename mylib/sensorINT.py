@@ -60,6 +60,7 @@ def loop():
             GPIO.output(ledPin,GPIO.LOW)
             print ('led off...')
             print(hmc5883l)
+            display.lcd_display_string(hmc5883l, 2)
             
         sleep(2)
 if __name__ =='__main__':
