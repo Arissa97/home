@@ -8,6 +8,7 @@ from i2c_adxl345 import *
 from i2c_itg3205 import *
 from time import *
 import drivers
+import time
 
 dhtDevice = adafruit_dht.DHT22(board.D14)
 temperature_c = dhtDevice.temperature
@@ -46,7 +47,11 @@ def loop():
             print ("X:" + str (x ))
             print ("Y:" + str (y ))
             print ("Z:" + str (z ))
-            print ("") 
+            print ("")
+            display.lcd_display_string(("X:" + str (x )) , 1)
+            display.lcd_display_string(("Y:" + str (y )) , 2)
+            time.sleep(2)
+            display.lcd_display_string(("Z:" + str (z )) , 1)
         if GPIO.input(sensorPin)==GPIO.HIGH:
             GPIO.output(ledPin,GPIO.HIGH)
             print('led on...')
@@ -60,8 +65,6 @@ def loop():
             GPIO.output(ledPin,GPIO.LOW)
             print ('led off...')
             print(hmc5883l)
-            display.lcd_display_string(hmc5883l, 2)
-            
         sleep(2)
 if __name__ =='__main__':
     setup()
