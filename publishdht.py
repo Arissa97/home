@@ -13,11 +13,11 @@ humidity = dhtDevice.humidity
 
 broker = 'broker.emqx.io' #broker.emqx.io 192.168.0.106
 port = 1883
-topic = "python/mqtt1"
+topic = "sensor"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
-username = 'emqx'
-password = 'public'
+#username = 'emqx'
+#password = 'public'
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
@@ -27,27 +27,25 @@ def connect_mqtt():
             print("Failed to connect, return code %d\n", rc)
 
     client = mqtt_client.Client(client_id)
-    client.username_pw_set(username, password)
+    #client.username_pw_set(username, password)
     client.on_connect = on_connect
     client.connect(broker, port)
     return client
 
 
 def publish(client):
-    msg_count = 0
+    #msg_count = 0
     while True:
         temperature_c = dhtDevice.temperature
         msg = temperature_c
-        #txt = humidity
         result = client.publish(topic, msg)
         # result: [0, 1]
         status = result[0]
         if status == 0:
             print(f"Send `{msg}` to topic `{topic}`")
-            #print(f"Send `{txt}` to topic `{topic}`")
         else:
             print(f"Failed to send message to topic {topic}")
-        msg_count += 1
+        #msg_count += 1
         time.sleep(2)
 
 def run():
