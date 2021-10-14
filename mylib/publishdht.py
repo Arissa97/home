@@ -20,7 +20,7 @@ temperature_f = temperature_c * (9/5) + 32
 humidity = dhtDevice.humidity
 
 hmc5883l = i2c_hmc5883l(1)
-#i = 1
+i = 1
 
 hmc5883l.setContinuousMode ()
 hmc5883l.setDeclination (2,4)
@@ -29,7 +29,7 @@ adxl345 = i2c_adxl345(1)
 
 itg3205 = i2c_itg3205(1)
 
-broker = '192.168.0.105' #broker.emqx.io 192.168.0.106
+broker = '192.168.0.108' #broker.emqx.io 192.168.0.106
 port = 1883
 topic = "sensor"
 # generate client ID with pub prefix randomly
@@ -54,35 +54,48 @@ def connect_mqtt():
 def publish(client):
     #msg_count = 0
     while True:
-        temperature_c = dhtDevice.temperature
-        (itgready, dataready) = itg3205.getInterruptStatus ()
-        (xgy, ygy, zgy) = itg3205.getDegPerSecAxes ()
-        (xacc, yacc, zacc) = adxl345.getAxes()
-        (xcom, ycom, zcom) = hmc5883l.getAxes()
-        msg1 =temperature_c
-        msg2 =temperature_f
-        msg3 =humidity
-        msg4= ","
-        msg5= xacc
-        msg6= yacc
-        msg7= zacc
-        msg8= xcom
-        msg9= ycom
-        msg10= zcom
-        msg11= xgy
-        msg12= ygy
-        msg13= zgy
-        msg = str (msg1) + msg4 +str(msg2) + msg4 +str (msg3) +msg4 + str(msg5) +msg4 + str(msg6)+msg4 + str(msg7)+msg4 + str(msg8)+msg4 + str(msg9)+msg4 + str(msg10)+msg4 + str(msg11)+msg4 + str(msg12)+msg4 + str(msg13)
-        result = client.publish(topic, msg)
-        # result: [0, 1]
-        status = result[0]
-        if status == 0:
-            print(f"Send `{msg}` to topic `{topic}`")
-           # print(f"Send `{msg1}` to topic `{topic}`")
-        else:
-            print(f"Failed to send message to topic {topic}")
-        #msg_count += 1
-        time.sleep(2)
+        try:
+            temperature_c = dhtDevice.temperature
+            (itgready, dataready) = itg3205.getInterruptStatus ()
+            (xgy, ygy, zgy) = itg3205.getDegPerSecAxes ()
+            (xacc, yacc, zacc) = adxl345.getAxes()
+            (xcom, ycom, zcom) = hmc5883l.getAxes()
+            msg1 =temperature_c #temperature in celcius
+            msg2 =temperature_f #temperature in fahrenheit
+            msg3 =humidity #humidity
+            msg4= ","
+            msg5= xacc #accelerometer x axis
+            msg6= yacc #accelerometer y axis
+            msg7= zacc #accelerometer z axis
+            msg8= xcom #compass x axis
+            msg9= ycom #compass y axis
+            msg10= zcom #compass z axis
+            msg11= xgy #gyro x axis
+            msg12= ygy #gyro y axis
+            msg13= zgy #gyro z axis
+            msg = str (msg1) + msg4 +str(msg2) + msg4 +str (msg3) +msg4 + str(msg5) +msg4 + str(msg6)+msg4 + str(msg7)+msg4 + str(msg8)+msg4 + str(msg9)+msg4 + str(msg10)+msg4 + str(msg11)+msg4 + str(msg12)+msg4 + str(msg13)
+            result = client.publish(topic, msg)
+            # result: [0, 1]
+            status = result[0]
+            if status == 0:
+                print(f"Send `{msg}` to topic `{topic}`")
+            # print(f"Send `{msg1}` to topic `{topic}`")
+            else:
+                print(f"Failed to send message to topic {topic}")
+            #msg_count += 1
+            time.sleep(2)
+
+        except RuntimeError as error:
+            # Errors happen fairly often, DHT's are hard to read, just keep going
+            print(error.args[0])
+            time.sleep(2.0)
+            continue
+        except Exception as error:
+            dhtDevice.exit()
+            raise error
+
+    time.sleep(2.0)
+        
 
 def run():
     client = connect_mqtt()
@@ -92,3 +105,5 @@ def run():
 
 if __name__ == '__main__':
     run()
+
+    

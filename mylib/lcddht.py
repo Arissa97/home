@@ -11,10 +11,12 @@ display =drivers.Lcd()
 
 #main body
 
-try:
-    while True:
+
+while True:
+    try:
         display.lcd_clear()
         temperature_c = dhtDevice.temperature
+        #temperature_f = temperature_c * (9/5) + 32
         print("Writing to display")
         temp= "temp: " + str(temperature_c)
         hum= "humid: " + str(humidity)
@@ -23,7 +25,14 @@ try:
         time.sleep(2)
        
 
-except KeyboardInterrupt:
-	print("Cleaning up")
-	display.lcd_clear()
+    except RuntimeError as error:
+        # Errors happen fairly often, DHT's are hard to read, just keep going
+        print(error.args[0])
+        time.sleep(2.0)
+        continue
+    except Exception as error:
+        dhtDevice.exit()
+        raise error
+
+    time.sleep(2.0)
 
