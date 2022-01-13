@@ -1,0 +1,5 @@
+dependencies:
+  flutter:
+    sdk: flutter
+
+  charts_flutter: ^0.11.0
